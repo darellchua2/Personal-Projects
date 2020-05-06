@@ -93,12 +93,24 @@ def OutputUsableCSV(input_file, output_file):
     df.rename(columns = header, inplace = True) 
     df.to_csv(output_file,index = False)
 
-def SplitCSVFiles(file):
+def SplitCSVFiles(file): #currently not in use
     base_file, ext = os.path.splitext(file)
     f = open(file, 'r')
     counter = 0
     for a in range(len(start_index_list)):
         output_file = str(base_file) + "-" + str(counter) + ext
+        f2 = open(output_file,'w+')
+        for b in range(start_index_list[a],end_index_list[a]):
+            f2.write(f.readline())
+        counter += 1
+
+def SplitCSVFiles(file,outputfile):
+    base_file, ext = os.path.splitext(file)
+    base_file2,ext2 = os.path.splitext(outputfile)
+    f = open(file, 'r')
+    counter = 0
+    for a in range(len(start_index_list)):
+        output_file = str(base_file2) + "-" + str(counter) + ext
         f2 = open(output_file,'w+')
         for b in range(start_index_list[a],end_index_list[a]):
             f2.write(f.readline())
@@ -124,7 +136,7 @@ for subdir, dirs, files in os.walk(currDir):
             print(output_file)
             output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
             print(output_file2)
-            SplitCSVFiles(output_file)
+            SplitCSVFiles(output_file,output_file2)
 
 
 
