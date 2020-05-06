@@ -68,7 +68,6 @@ dist/00001 - AGS File Conversion v3.0.0.200505/5-SGO SI LIM CHU KANG SINGAPORE.a
 dist/00001 - AGS File Conversion v3.0.0.200505/5-SGO SI LIM CHU KANG SINGAPORE-0-BASE.xlsx
 dist/00001 - AGS File Conversion v3.0.0.200505/00001 - AGS File Conversion v3.0.0.200505.exe.manifest
 dist/00001 - AGS File Conversion v3.0.0.200505/00001 - AGS File Conversion v3.0.0.200505.exe
-00002 - AGS Conversion submodule/00002 - AGS Conversion submodule v200505.0.0.1.py
 00001 - AGS File Conversion v3.0.0.200505/XLSX_converted FOLDER - Compilation/7-SGO_SI_LORONGSEMANGKA-5_converted.xlsx
 00001 - AGS File Conversion v3.0.0.200505/XLSX_converted FOLDER - Compilation/7-SGO_SI_LORONGSEMANGKA-11_converted.xlsx
 00001 - AGS File Conversion v3.0.0.200505/XLSX_converted FOLDER - Compilation/6-SGO SI LIM CHU KANG SINGAPORE-4_converted.xlsx
@@ -97,3 +96,5 @@ dist/00001 - AGS File Conversion v3.0.0.200505/00001 - AGS File Conversion v3.0.
 00001 - AGS File Conversion v3.0.0.200505/5-SGO SI LIM CHU KANG SINGAPORE-3-BASE.xlsx
 00001 - AGS File Conversion v3.0.0.200505/3-SGO_SI_SK04.ags
 00001 - AGS File Conversion v3.0.0.200505.spec
+*.ags
+*.csv
