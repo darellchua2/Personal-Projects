@@ -89,8 +89,6 @@ for row in csvreader:
 			new_dict = {"hi2":[start_index,end_index]}
 		start_index = index + 1
 
-	# else:
-	# 	PrintCSVRowList(row)
 
 	index += 1
 
