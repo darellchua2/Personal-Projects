@@ -20,9 +20,9 @@ def FindIndexInCSVToSplit(file):
 				if substring in row[0]:
 					store = row[0]
 					start_index = index
-					print("this is start index " + str(start_index))
+					# print("this is start index " + str(start_index))
 			except IndexError as error:
-				print("Empty row is at " + str(index))
+				# print("Empty row is at " + str(index))
 				end_index = index
 				new_dict[store] = [start_index,end_index]
 			finally: 
@@ -69,6 +69,22 @@ def PrintCSVRowList(row):
 	except IndexError as error:
 		print("There is no index here")
 
+def PrepareList(index_dict):
+	keys_list = list(index_dict.keys())
+	values_list = list(index_dict.values())
+	start_index_list = []
+	end_index_list = []
+	for i in range (0,len(values_list)):
+
+		print(i,values_list[i][0])
+		print(i,values_list[i][1])
+		start_index_list.append(values_list[i][0])
+		end_index_list.append(values_list[i][1])
+
+	print(start_index_list)
+	print(end_index_list)
+	return keys_list, start_index_list, end_index_list
+
 createFolder("AGS TO csv - Compilation")
 # CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")	
 currDir = os.getcwd()
@@ -83,23 +99,22 @@ for subdir, dirs, files in os.walk(currDir):
 
 
 
+index_dict = FindIndexInCSVToSplit("5-SGO SI LIM CHU KANG SINGAPORE.csv")
 
-print(FindIndexInCSVToSplit("5-SGO SI LIM CHU KANG SINGAPORE.csv"))
 
-# index = 0
+
+keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+
+index = 0
+dict_index = 0
 # with open("5-SGO SI LIM CHU KANG SINGAPORE.csv") as csvfile:
 # 		reader = csv.reader(csvfile)
 # 		for row in reader:
 # 			try:
-# 				if substring in row[0]:
-# 					store = row[0]
-# 					start_index = index
-# 					print("this is start index " + str(start_index))
+# 				if keys_list[dict_index] == row[index]:
+# 					print("this is the right key index " + str(keys_list[index]))
+# 					dict_index += 1
+# 				else:
+# 					pass
 # 			except IndexError as error:
-# 				print("Empty row is at " + str(index))
-# 				end_index = index
-# 				new_dict[store] = [start_index,end_index]
-# 			finally: 
 # 				index +=1
-# 	return new_dict
-		
