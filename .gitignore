@@ -98,3 +98,4 @@ dist/00001 - AGS File Conversion v3.0.0.200505/00001 - AGS File Conversion v3.0.
 00001 - AGS File Conversion v3.0.0.200505.spec
 *.ags
 *.csv
+*.xlsx

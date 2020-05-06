@@ -67,7 +67,7 @@ rootdir = os.path.abspath(os.path.join(currDir, '..'))
 if rootdir not in sys.path: # add parent dir to paths
     sys.path.append(rootdir)
 
-for subdir, dirs, files in os.walk(rootdir):
+for subdir, dirs, files in os.walk(currDir):
     for file in files:
         base_file, ext = os.path.splitext(file)
         filepath = subdir + os.sep + file
