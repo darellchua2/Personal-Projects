@@ -92,5 +92,4 @@ for row in csvreader:
 
 	index += 1
 
-
 print(new_dict)
