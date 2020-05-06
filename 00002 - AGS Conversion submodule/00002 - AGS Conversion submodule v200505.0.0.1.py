@@ -52,5 +52,5 @@ for subdir, dirs, files in os.walk(currDir):
         if filepath.endswith(".ags"):
         	CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")
       		
-#
+##
 
