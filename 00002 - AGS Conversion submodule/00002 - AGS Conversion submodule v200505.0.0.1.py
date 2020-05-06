@@ -60,6 +60,7 @@ for subdir, dirs, files in os.walk(currDir):
         if filepath.endswith(".ags"):
         	CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")
 
+
 file = "1-SGO_SI_ROM.csv"
 file2 = open(file)
 reader = csv.reader(file2)
@@ -92,5 +93,6 @@ for row in csvreader:
 	# 	PrintCSVRowList(row)
 
 	index += 1
+
 
 print(new_dict)
