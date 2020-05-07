@@ -73,7 +73,7 @@ def createFolder(folder_name):
     try:
         os.mkdir(folder_name)
     except OSError:
-        print ("Creation of the directory %s failed, the file already exist" % folder_name)    
+        print ("Creation of the directory '%s' failed, the file already exist" % folder_name)    
 
 def PrintCSVRowList(row): #not in use
     try:
@@ -91,8 +91,8 @@ def PrepareList(index_dict):
         # print(i,values_list[i][1])
         start_index_list.append(values_list[i][0])
         end_index_list.append(values_list[i][1])
-    print(start_index_list)
-    print(end_index_list)
+    # print(start_index_list)
+    # print(end_index_list)
     return keys_list, start_index_list, end_index_list
 
 def OutputUsableCSV(input_file, output_file):
@@ -125,48 +125,6 @@ def SplitCSVFiles(file,outputfile,keys_list,start_index_list, end_index_list):
                 if index >= start_index_list[a] and index <=(end_index_list[a]):
                     outfile.write(line)
 
-createFolder("AGS to CSV - Compilation")
-createFolder("Split CSV - Compilation")
-createFolder("CSV Cleaning - Compilation")
-
-def createSubFolder(keys_list,folder_name):
-    for key in keys_list:
-        new_foldername = "CSV Cleaning - Compilation" + os.sep + key[2:]
-        print(new_foldername)
-        createFolder(new_foldername)    
-
-
-currDir = os.getcwd()
-
-for subdir, dirs, files in os.walk(currDir):
-    for file in files:
-        base_file, ext = os.path.splitext(file)
-        filepath = subdir + os.sep + file
-        # print(filepath)
-        if filepath.endswith(".ags"):
-            output_file = CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")
-            index_dict = FindIndexInCSVToSplit(output_file)
-            keys_list, start_index_list, end_index_list = PrepareList(index_dict)
-            for key in keys_list:
-                new_foldername = "CSV Cleaning - Compilation" + os.sep + key[2:]
-                print(new_foldername)
-                createFolder(new_foldername)
-            print(keys_list)
-            output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
-            SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
-            output_file3 = output_file2.replace("Split CSV - Compilation","CSV Cleaning - Compilation")
-
-# for subdir, dirs, files in os.walk(currDir):
-#     for file in files:
-#         base_file, ext = os.path.splitext(file)
-#         filepath = subdir + os.sep + file
-#         # print(filepath)
-#         if filepath.endswith(".csv"):
-#             print(filepath)
-
-print("Process have completed")
-
-
 def OutputUsableCSV8(input_file, output_file,key_list_value):
     df = pd.read_csv(input_file,header = [1,2])
     print(df.head())
@@ -177,9 +135,9 @@ def IsCorrectFile(input_file,key_list_value):
         reader = csv.reader(f)
         for row in reader:
             if row[0] == key_list_value:
-                return input_file
+                return key_list_value
             else: 
-                return (input_file + " is not the right file")
+                return ("This is not the right key_list_value: " + key_list_value)
 
 
 def IsCorrectFile2(input_file,key_list_value):
@@ -190,10 +148,73 @@ def IsCorrectFile2(input_file,key_list_value):
                 return True
             else: 
                 return False
+folder1 = "AGS to CSV - Compilation"
+folder2 = "Split CSV - Compilation"
+folder3 = "CSV Cleaning - Compilation"
+
+createFolder(folder1)
+createFolder(folder2)
+createFolder(folder3)
+
+def CreateSubFolder(keys_list,folder_name):
+    for key in keys_list:
+        new_foldername = folder_name + os.sep + key[2:]
+        new_foldername = new_foldername.replace('?','')
+        createFolder(new_foldername)    
 
 
-filepath = "7-SGO_SI_LORONGSEMANGKA-8.csv"
-filepath2 = "7-SGO_SI_LORONGSEMANGKA-8-2.csv"
+currDir = os.getcwd()
+master_keylist = {}
+for subdir, dirs, files in os.walk(currDir):
+    for file in files:
+        base_file, ext = os.path.splitext(file)
+        filepath = subdir + os.sep + file
+        # print(filepath)
+        if filepath.endswith(".ags"):
+            output_file = CreateFileWithNewExtension(file,folder1,".ags",".csv")
+            index_dict = FindIndexInCSVToSplit(output_file)
+            keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+            CreateSubFolder(keys_list,folder3)
+            output_file2 = output_file.replace(folder1,folder2)
+            SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
+            master_keylist[base_file] = keys_list
 
-# print(IsCorrectFile(filepath,"**ISPT"))
-OutputUsableCSV8(filepath, filepath2,"**ISPT")
+print(master_keylist)
+folder2_dir = currDir + os.sep + folder2
+print("this is folder2_dir path " + folder2_dir)
+for subdir, dirs, files in os.walk(folder2_dir):
+    for file in files:
+        base_file, ext = os.path.splitext(file)
+        filepath = subdir + os.sep + file
+        # print(base_file)
+        if filepath.endswith(".csv"):
+            index_dict = FindIndexInCSVToSplit(filepath)
+            keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+            # print(filepath)
+            specific_keylist_values = list()
+            for master_key in master_keylist:
+                # print(master_key)
+                check = base_file.find(master_key)
+                if check == 0:
+                    # print("yes this is matching file : " + master_key)
+                    specific_keylist_values = master_keylist[master_key]
+                    for i in range(len(specific_keylist_values)):
+                        try:
+                            check2 = IsCorrectFile2(filepath,specific_keylist_values[i])
+                            if check2 == True:
+                                print(filepath)
+                                value = specific_keylist_values[i].replace('?','')
+                                filepath2 = filepath.replace(folder2,(folder3 + os.sep + value[2:]))
+                                print(filepath2)
+                                shutil.move(filepath,filepath2)
+                        except FileNotFoundError as error:
+                            pass
+
+
+
+
+
+
+print("Process have completed")
+
+
