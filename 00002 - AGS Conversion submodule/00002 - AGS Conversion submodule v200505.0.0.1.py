@@ -132,22 +132,51 @@ createFolder("CSV Cleaning - Compilation")
 
 currDir = os.getcwd()
 
-for subdir, dirs, files in os.walk(currDir):
-    for file in files:
-        base_file, ext = os.path.splitext(file)
-        filepath = subdir + os.sep + file
-        # print(filepath)
-        if filepath.endswith(".ags"):
-            output_file = CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")
-            index_dict = FindIndexInCSVToSplit(output_file)
-            keys_list, start_index_list, end_index_list = PrepareList(index_dict)
-            print(keys_list)
-            output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
-            SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
-            output_file3 = output_file2.replace("Split CSV - Compilation","CSV Cleaning - Compilation")
-
+# for subdir, dirs, files in os.walk(currDir):
+#     for file in files:
+#         base_file, ext = os.path.splitext(file)
+#         filepath = subdir + os.sep + file
+#         # print(filepath)
+#         if filepath.endswith(".ags"):
+#             output_file = CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")
+#             index_dict = FindIndexInCSVToSplit(output_file)
+#             keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+#             print(keys_list)
+#             output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
+#             SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
+#             output_file3 = output_file2.replace("Split CSV - Compilation","CSV Cleaning - Compilation")
 
 print("Process have completed")
 
 
+def OutputUsableCSV2(input_file, output_file,key_list_value):
+    df = pd.read_csv(input_file)
+    print(df.head())
+    # header = df.iloc[0]
+    # df = df[2:]
+    # df.rename(columns = header, inplace = True) 
+    # df.to_csv(output_file,index = False)
 
+def IsCorrectFile(input_file,key_list_value):
+    with open(input_file,'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if row[0] == key_list_value:
+                return True
+            else: 
+                return False
+
+
+# for subdir, dirs, files in os.walk(currDir):
+#     for file in files:
+#         base_file, ext = os.path.splitext(file)
+#         filepath = subdir + os.sep + file
+#         # print(filepath)
+#         if filepath.endswith(".csv"):
+#             print(filepath)
+
+# filepath = "7-SGO_SI_LORONGSEMANGKA-8.csv"
+# filepath2 = "7-SGO_SI_LORONGSEMANGKA-8-2.csv"
+
+print(IsCorrectFile(filepath,"**ISPT"))
+# OutputUsableCSV2(filepath, filepath2,"**ISPT")
