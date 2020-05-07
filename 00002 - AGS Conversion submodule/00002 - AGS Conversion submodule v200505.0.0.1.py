@@ -5,8 +5,6 @@ from openpyxl import Workbook
 from openpyxl import load_workbook
 import shutil
 import pandas as pd
-import SplitCSV
-
 
 def FindIndexInCSVToSplit(file):
     index = 0
@@ -98,7 +96,7 @@ def PrepareList(index_dict):
     return keys_list, start_index_list, end_index_list
 
 def OutputUsableCSV(input_file, output_file):
-    df = pd.read_csv(file)
+    df = pd.read_csv(input_file)
     header = df.iloc[0]
     df = df[2:]
     df.rename(columns = header, inplace = True) 
@@ -134,23 +132,22 @@ createFolder("CSV Cleaning - Compilation")
 
 currDir = os.getcwd()
 
-# for subdir, dirs, files in os.walk(currDir):
-#     for file in files:
-#         base_file, ext = os.path.splitext(file)
-#         filepath = subdir + os.sep + file
-#         # print(filepath)
-#         if filepath.endswith(".ags"):
-#             output_file = CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")
-#             index_dict = FindIndexInCSVToSplit(output_file)
-#             keys_list, start_index_list, end_index_list = PrepareList(index_dict)
-#             print(keys_list)
-#             output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
-#             # SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
+for subdir, dirs, files in os.walk(currDir):
+    for file in files:
+        base_file, ext = os.path.splitext(file)
+        filepath = subdir + os.sep + file
+        # print(filepath)
+        if filepath.endswith(".ags"):
+            output_file = CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")
+            index_dict = FindIndexInCSVToSplit(output_file)
+            keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+            print(keys_list)
+            output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
+            SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
+            output_file3 = output_file2.replace("Split CSV - Compilation","CSV Cleaning - Compilation")
 
 
-output_file = CreateFileWithNewExtension("1-SGO_SI_ROM.ags","AGS TO csv - Compilation",".ags",".csv")
-index_dict = FindIndexInCSVToSplit(output_file)
-keys_list, start_index_list, end_index_list = PrepareList(index_dict)
-output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
-SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
+print("Process have completed")
+
+
 
