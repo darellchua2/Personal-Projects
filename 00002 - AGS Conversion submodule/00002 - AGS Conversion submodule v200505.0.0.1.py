@@ -5,7 +5,7 @@ from openpyxl import Workbook
 from openpyxl import load_workbook
 import shutil
 import pandas as pd
-from csv import DictReader
+
 
 def FindIndexInCSVToSplit(file):
     index = 0
@@ -13,21 +13,33 @@ def FindIndexInCSVToSplit(file):
     end_index = 0
     new_dict = {}
     substring = "**"
+    max_lines = 0
+    with open(file,'r') as f:
+        for line in f:
+            max_lines +=1
+
     with open(file) as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             try:
-                if substring in row[0]:
+                if row[0][:2] == substring:
                     store = row[0]
                     start_index = index
-                    # print("this is start index " + str(start_index))
+                    new_dict[store] = [start_index,end_index]
+                elif len(row) ==0 :
+                    end_index = index
+                    new_dict[store] = [start_index,end_index]
+                elif index == max_lines - 1:
+                    end_index = index
+                    new_dict[store] = [start_index,end_index]
             except IndexError as error:
-                # print("Empty row is at " + str(index))
-                end_index = index
-                new_dict[store] = [start_index,end_index]
+                    end_index = index
+                    new_dict[store] = [start_index,end_index]
+
             finally: 
                 index +=1
     return new_dict
+
 
 def CreateFileWithNewExtension(file,destination_folder):
     try: 
@@ -104,7 +116,7 @@ def SplitCSVFiles(file): #currently not in use
             f2.write(f.readline())
         counter += 1
 
-def SplitCSVFiles(file,outputfile):
+def SplitCSVFiles(file,outputfile,keys_list,start_index_list, end_index_list):
     base_file, ext = os.path.splitext(file)
     base_file2,ext2 = os.path.splitext(outputfile)
     f = open(file, 'r')
@@ -117,8 +129,10 @@ def SplitCSVFiles(file,outputfile):
         counter += 1
 
 
+
 createFolder("AGS to CSV - Compilation")
 createFolder("Split CSV - Compilation")
+createFolder("CSV Cleaning - Compilation")
 
 
 # CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv") 
@@ -133,28 +147,9 @@ for subdir, dirs, files in os.walk(currDir):
             output_file = CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")
             index_dict = FindIndexInCSVToSplit(output_file)
             keys_list, start_index_list, end_index_list = PrepareList(index_dict)
-            print(output_file)
+            print(keys_list)
             output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
-            print(output_file2)
-            SplitCSVFiles(output_file,output_file2)
-
-
-
-
-
-
-# file = "5-SGO SI LIM CHU KANG SINGAPORE_test.csv"
-
-# base_file, ext = os.path.splitext(file)
-# print(base_file,ext)
-# counter = 0
-# output_file = str(base_file) + "-" + str(counter) + ext
-# print(output_file)
-
-# # OutputUsableCSV(file,output_file)
-# print("-------")
-
-
+            SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
 
 
 
