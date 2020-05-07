@@ -5,6 +5,7 @@ from openpyxl import Workbook
 from openpyxl import load_workbook
 import shutil
 import pandas as pd
+import SplitCSV
 
 
 def FindIndexInCSVToSplit(file):
@@ -17,7 +18,7 @@ def FindIndexInCSVToSplit(file):
     with open(file,'r') as f:
         for line in f:
             max_lines +=1
-
+    f.close()
     with open(file) as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
@@ -41,7 +42,7 @@ def FindIndexInCSVToSplit(file):
     return new_dict
 
 
-def CreateFileWithNewExtension(file,destination_folder):
+def CreateFileWithNewExtension(file,destination_folder): # not in use
     try: 
         currDir = os.getcwd()
         rootdir = os.path.abspath(os.path.join(currDir, '..'))
@@ -76,7 +77,7 @@ def createFolder(folder_name):
     except OSError:
         print ("Creation of the directory %s failed, the file already exist" % folder_name)    
 
-def PrintCSVRowList(row):
+def PrintCSVRowList(row): #not in use
     try:
         print(row[0])
     except IndexError as error:
@@ -88,12 +89,10 @@ def PrepareList(index_dict):
     start_index_list = []
     end_index_list = []
     for i in range (0,len(values_list)):
-
-        print(i,values_list[i][0])
-        print(i,values_list[i][1])
+        # print(i,values_list[i][0])
+        # print(i,values_list[i][1])
         start_index_list.append(values_list[i][0])
         end_index_list.append(values_list[i][1])
-
     print(start_index_list)
     print(end_index_list)
     return keys_list, start_index_list, end_index_list
@@ -124,32 +123,93 @@ def SplitCSVFiles(file,outputfile,keys_list,start_index_list, end_index_list):
     for a in range(len(start_index_list)):
         output_file = str(base_file2) + "-" + str(counter) + ext
         f2 = open(output_file,'w+')
+        x = 0
         for b in range(start_index_list[a],end_index_list[a]):
             f2.write(f.readline())
+            x += 1
+        counter += 1
+        print(a, start_index_list[a], end_index_list[a],x)
+
+def SplitCSVFiles2(file,outputfile,keys_list,start_index_list, end_index_list):
+    base_file, ext = os.path.splitext(file)
+    base_file2,ext2 = os.path.splitext(outputfile)
+    f= open(file,'r')
+    data = csv.reader(f)
+    for a in range(len(start_index_list)):
+        counter = 0
+        output_file = str(base_file2) + "-" + str(a) + ext
+        f2 = open(output_file,'w+')
+        for row in data:
+            print(start_index_list[a],end_index_list[a])
+            if (counter >= start_index_list[a] and counter <=end_index_list[a]):
+                print(counter)
+            counter += 1
+            print(counter)
+        print("------" + str(a))
+
+
+def SplitCSVFiles3(file,outputfile,keys_list,start_index_list, end_index_list):
+    base_file, ext = os.path.splitext(file)
+    base_file2,ext2 = os.path.splitext(outputfile)
+    f= open(file,'r')
+    data = csv.reader(f)
+    for a in range(len(start_index_list)):
+        counter = 0
+        output_file = str(base_file2) + "-" + str(a) + ext
+        with open(output_file,'w+') as f2:
+            x = 0
+            for b in range(start_index_list[a],end_index_list[a]):
+                f2.write(f.read())
+                x += 1 
+        f2.close()
         counter += 1
 
+def SplitCSVFiles4(file,outputfile,keys_list,start_index_list, end_index_list):
+    base_file, ext = os.path.splitext(file)
+    base_file2,ext2 = os.path.splitext(outputfile)
+    f= open(file,'r')
+    reader = csv.reader(f)
+    for a in range(0,len(start_index_list)):
+        counter = 0
+        output_file = str(base_file2) + "-" + str(a) + ext
+        SplitCSV.split(output_file,)
 
+def SplitCSVFiles5(file,outputfile,keys_list,start_index_list, end_index_list):
+    base_file, ext = os.path.splitext(file)
+    base_file2,ext2 = os.path.splitext(outputfile)
+    infile= open(file,'r').readlines()
+
+    for a in range(len(start_index_list)):
+        output_file = str(base_file2) + "-" + str(a) + ext
+        with open(output_file,'w') as outfile:
+            for index,line in enumerate(infile):
+                if index >= start_index_list[a] and index <=(end_index_list[a]):
+                    outfile.write(line)
 
 createFolder("AGS to CSV - Compilation")
 createFolder("Split CSV - Compilation")
 createFolder("CSV Cleaning - Compilation")
 
 
-# CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv") 
 currDir = os.getcwd()
 
-for subdir, dirs, files in os.walk(currDir):
-    for file in files:
-        base_file, ext = os.path.splitext(file)
-        filepath = subdir + os.sep + file
-        # print(filepath)
-        if filepath.endswith(".ags"):
-            output_file = CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")
-            index_dict = FindIndexInCSVToSplit(output_file)
-            keys_list, start_index_list, end_index_list = PrepareList(index_dict)
-            print(keys_list)
-            output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
-            SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
+# for subdir, dirs, files in os.walk(currDir):
+#     for file in files:
+#         base_file, ext = os.path.splitext(file)
+#         filepath = subdir + os.sep + file
+#         # print(filepath)
+#         if filepath.endswith(".ags"):
+#             output_file = CreateFileWithNewExtension(file,"AGS TO csv - Compilation",".ags",".csv")
+#             index_dict = FindIndexInCSVToSplit(output_file)
+#             keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+#             print(keys_list)
+#             output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
+#             # SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
 
 
+output_file = CreateFileWithNewExtension("1-SGO_SI_ROM.ags","AGS TO csv - Compilation",".ags",".csv")
+index_dict = FindIndexInCSVToSplit(output_file)
+keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+output_file2 = output_file.replace("AGS TO csv - Compilation","Split CSV - Compilation")
+SplitCSVFiles5(output_file,output_file2,keys_list, start_index_list, end_index_list)
 
