@@ -231,6 +231,7 @@ with open(test_file) as csvfile:
             # print(str(index) + " (new_list1) = " + str(new_list1))
             
             if new_list1[0] == "<CONT>": 
+                ref_counter = index - 1
                 print(str(index) + " OLD (new_list0) = " + str(new_list0))
                 print(str(index) + " OLD (new_list1) = " + str(new_list1))
                 new_list1[0] = ""
@@ -241,7 +242,28 @@ with open(test_file) as csvfile:
                         print("this has exceeded index")
                 # print(str(index) + " NEW (new_list0) = " + str(new_list0))
                 print(str(index) + " NEW (new_list1) = " + str(new_list1))
-
             print("----")
-            line2 = '","'.join(new_list1)
-            print("///" + line2)
+
+import csv
+
+def return_contents(file_name):
+    with open(file_name) as infile:
+        reader = csv.reader(infile)
+        return list(reader)
+
+# data1 = return_contents(test_file)
+# data2 = return_contents(test_file)
+
+# print(data1)
+# print(data2)
+
+# combined = []
+# for row in data1:
+#     combined.extend(row)
+
+# for row in data2:
+#     combined.extend(row)
+
+# with open('csv_out.csv', 'w', newline='') as outfile:
+#     writer = csv.writer(outfile)
+#     writer.writerow(combined)
