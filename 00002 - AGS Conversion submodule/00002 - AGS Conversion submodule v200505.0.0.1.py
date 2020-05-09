@@ -212,58 +212,70 @@ print("Process have completed")
 test_file = "1-SGO_SI_ROM-0.csv"
 test_outputfile = "1-SGO_SI_ROM-0-cleaned.csv"
 
-with open(test_file) as csvfile:
+with open(test_file) as csvfile, open(test_file)  as csvfile_out:
     with open(test_outputfile,'w') as csvfile2:
         csvfile_1 = csvfile.readlines()
+        csvfile_2 = csvfile_out.readlines()
+
         new_list1 = list()
         new_list0 = list()
+        isCont = False
         for index,line in enumerate(csvfile_1):
-            # print(line)
-            new_list0 = new_list1
-            # line = line.replace('"','')
-            new_list1 = line.split('","')
-            for i in range(len(new_list1)):
-                new_list1[i] = new_list1[i].replace('"','')
+            new_list0 = line.split('","')
+            for i in range(len(new_list0)):
+                new_list0[i] = new_list0[i].replace('"','')
+                # print(new_list0[i])
 
-            # print(len(new_list1))
-            
-            # print(str(index) + " (new_list0) = " + str(new_list0))
-            # print(str(index) + " (new_list1) = " + str(new_list1))
-            
-            if new_list1[0] == "<CONT>": 
-                ref_counter = index - 1
-                print(str(index) + " OLD (new_list0) = " + str(new_list0))
-                print(str(index) + " OLD (new_list1) = " + str(new_list1))
-                new_list1[0] = ""
-                for i in range (0,len(new_list1)):
-                    try:
-                        new_list1[i] = new_list0[i] + new_list1[i]
-                    except IndexError as error:
-                        print("this has exceeded index")
-                # print(str(index) + " NEW (new_list0) = " + str(new_list0))
-                print(str(index) + " NEW (new_list1) = " + str(new_list1))
+            ref_counter = index + 1
+            print("index is " + str(index))
+            line4 = ','.join(new_list0)
+            # print(line4)
+            for index2,line2 in enumerate(csvfile_2):   
+                new_list1 = line2.split('","')
+                for i in range(len(new_list1)):
+                    new_list1[i] = new_list1[i].replace('"','')
+                    if(ref_counter == index2):
+                        if new_list1[0] == "<CONT>": 
+                            isCont = True
+                            # print("this index2 is "+ str(index2))
+                            # print(str(index) + " OLD (new_list1) = " + str(new_list1))
+                            new_list1[0] =""
+                            for j in range(len(new_list0)):
+                                # print(new_list0[i])
+                                new_list1[j] = new_list0[j] + new_list1[j]
+                                if j == (len(new_list1) - 1):
+                                    new_list1[j] = new_list1[j][2:]
+                            
+                            # print(str(index) + " NEW (new_list1) = " + str(new_list1))
+                            # print(new_list1)
+                            line3 = ""
+                            for k in range(len(new_list1)):
+                                if k == 0:
+                                    line3 = '"' + new_list1[k] + '"'
+                                else:
+                                    line3 = line3 + "," + '"' + new_list1[k] + '"'
+                            print(new_list1)
+                            print(i)
+                            csvfile2.write(line3)
+                    else:
+                        pass
+
+            if "<CONT>" in new_list0[0]: 
+                print("this has " + str(new_list0[0]))
+            else: 
+                if isCont == True:
+                    isCont = False
+                    pass
+                else:
+                    line2 = ','.join(new_list0)
+                    print(new_list0)
+                    csvfile2.write(line)
+
             print("----")
 
-import csv
 
 def return_contents(file_name):
     with open(file_name) as infile:
         reader = csv.reader(infile)
         return list(reader)
 
-# data1 = return_contents(test_file)
-# data2 = return_contents(test_file)
-
-# print(data1)
-# print(data2)
-
-# combined = []
-# for row in data1:
-#     combined.extend(row)
-
-# for row in data2:
-#     combined.extend(row)
-
-# with open('csv_out.csv', 'w', newline='') as outfile:
-#     writer = csv.writer(outfile)
-#     writer.writerow(combined)
