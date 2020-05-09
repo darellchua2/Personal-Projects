@@ -148,6 +148,83 @@ def IsCorrectFile2(input_file,key_list_value):
                 return True
             else: 
                 return False
+
+def return_contents(file_name):
+    with open(file_name) as infile:
+        reader = csv.reader(infile)
+        return list(reader)
+
+def RemoveCONT(test_file,test_outputfile):
+    with open(test_file) as csvfile, open(test_file)  as csvfile_out:
+        with open(test_outputfile,'w') as csvfile2:
+            csvfile_1 = csvfile.readlines()
+            csvfile_2 = csvfile_out.readlines()
+
+            new_list1 = list()
+            new_list0 = list()
+            isCont = False
+            for index,line in enumerate(csvfile_1):
+                new_list0 = line.split('","')
+                for i in range(len(new_list0)):
+                    new_list0[i] = new_list0[i].replace('"','')
+                    # print(new_list0[i])
+
+                ref_counter = index + 1
+                # print("index is " + str(index))
+                line4 = ','.join(new_list0)
+                # print(line4)
+                for index2,line2 in enumerate(csvfile_2):   
+                    new_list1 = line2.split('","')
+                    for i in range(len(new_list1)):
+                        new_list1[i] = new_list1[i].replace('"','')
+                        if(ref_counter == index2):
+                            if new_list1[0] == "<CONT>": 
+                                isCont = True
+                                # print("this index2 is "+ str(index2))
+                                # print(str(index) + " OLD (new_list1) = " + str(new_list1))
+                                new_list1[0] =""
+                                for j in range(len(new_list0)):
+                                    # print(new_list0[i])
+                                    new_list1[j] = new_list0[j] + new_list1[j]
+                                    if j == (len(new_list1) - 1):
+                                        new_list1[j] = new_list1[j][2:]
+                                
+                                # print(str(index) + " NEW (new_list1) = " + str(new_list1))
+                                # print(new_list1)
+                                line3 = ""
+                                for k in range(len(new_list1)):
+                                    if k == 0:
+                                        line3 = new_list1[k]
+                                    elif k == len(new_list1)-1:
+                                        line3 = line3 + "," + '"' + new_list1[k]
+                                    else:
+                                        line3 = line3 + "," + '"' + new_list1[k] + '"'
+
+                                # print(new_list1)
+                                # print(i)
+                                csvfile2.write(line3)
+                        else:
+                            pass
+
+                if "<CONT>" in new_list0[0]: 
+                    print("this has " + str(new_list0[0]))
+                else: 
+                    if isCont == True:
+                        isCont = False
+                        pass
+                    else:
+                        line2 = ','.join(new_list0)
+                        print(new_list0)
+                        csvfile2.write(line)
+
+                print("----")
+
+def CreateSubFolder(keys_list,folder_name):
+    for key in keys_list:
+        new_foldername = folder_name + os.sep + key[2:]
+        new_foldername = new_foldername.replace('?','')
+        createFolder(new_foldername)    
+
 folder1 = "AGS to CSV - Compilation"
 folder2 = "Split CSV - Compilation"
 folder3 = "CSV Cleaning - Compilation"
@@ -156,126 +233,52 @@ createFolder(folder1)
 createFolder(folder2)
 createFolder(folder3)
 
-def CreateSubFolder(keys_list,folder_name):
-    for key in keys_list:
-        new_foldername = folder_name + os.sep + key[2:]
-        new_foldername = new_foldername.replace('?','')
-        createFolder(new_foldername)    
 
 
 currDir = os.getcwd()
-# master_keylist = {}
-# for subdir, dirs, files in os.walk(currDir):
-#     for file in files:
-#         base_file, ext = os.path.splitext(file)
-#         filepath = subdir + os.sep + file
-#         # print(filepath)
-#         if filepath.endswith(".ags"):
-#             output_file = CreateFileWithNewExtension(file,folder1,".ags",".csv")
-#             index_dict = FindIndexInCSVToSplit(output_file)
-#             keys_list, start_index_list, end_index_list = PrepareList(index_dict)
-#             CreateSubFolder(keys_list,folder3)
-#             output_file2 = output_file.replace(folder1,folder2)
-#             SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
-#             master_keylist[base_file] = keys_list
+master_keylist = {}
+for subdir, dirs, files in os.walk(currDir):
+    for file in files:
+        base_file, ext = os.path.splitext(file)
+        filepath = subdir + os.sep + file
+        # print(filepath)
+        if filepath.endswith(".ags"):
+            output_file = CreateFileWithNewExtension(file,folder1,".ags",".csv")
+            index_dict = FindIndexInCSVToSplit(output_file)
+            keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+            CreateSubFolder(keys_list,folder2)
+            CreateSubFolder(keys_list,folder3)
+            output_file2 = output_file.replace(folder1,folder2)
+            SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
+            master_keylist[base_file] = keys_list
 
-# print(master_keylist)
-# folder2_dir = currDir + os.sep + folder2
-# print("this is folder2_dir path " + folder2_dir)
-# for subdir, dirs, files in os.walk(folder2_dir):
-#     for file in files:
-#         base_file, ext = os.path.splitext(file)
-#         filepath = subdir + os.sep + file
-#         # print(base_file)
-#         if filepath.endswith(".csv"):
-#             index_dict = FindIndexInCSVToSplit(filepath)
-#             keys_list, start_index_list, end_index_list = PrepareList(index_dict)
-#             # print(filepath)
-#             specific_keylist_values = list()
-#             for master_key in master_keylist:
-#                 # print(master_key)
-#                 check = base_file.find(master_key)
-#                 if check == 0:
-#                     # print("yes this is matching file : " + master_key)
-#                     specific_keylist_values = master_keylist[master_key]
-#                     for i in range(len(specific_keylist_values)):
-#                         try:
-#                             if IsCorrectFile2(filepath,specific_keylist_values[i]) == True:
-#                                 value = specific_keylist_values[i].replace('?','')
-#                                 filepath2 = filepath.replace(folder2,(folder3 + os.sep + value[2:]))
-#                                 shutil.move(filepath,filepath2)
-#                         except FileNotFoundError as error:
-#                             pass
+print(master_keylist)
+folder2_dir = currDir + os.sep + folder2
+print("this is folder2_dir path " + folder2_dir)
+for subdir, dirs, files in os.walk(folder2_dir):
+    for file in files:
+        base_file, ext = os.path.splitext(file)
+        filepath = subdir + os.sep + file
+        # print(base_file)
+        if filepath.endswith(".csv"):
+            index_dict = FindIndexInCSVToSplit(filepath)
+            keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+            # print(filepath)
+            specific_keylist_values = list()
+            for master_key in master_keylist:
+                # print(master_key)
+                check = base_file.find(master_key)
+                if check == 0:
+                    # print("yes this is matching file : " + master_key)
+                    specific_keylist_values = master_keylist[master_key]
+                    for i in range(len(specific_keylist_values)):
+                        try:
+                            if IsCorrectFile2(filepath,specific_keylist_values[i]) == True:
+                                value = specific_keylist_values[i].replace('?','')
+                                filepath2 = filepath.replace(folder2,(folder2 + os.sep + value[2:]))
+                                shutil.move(filepath,filepath2)
+                        except FileNotFoundError as error:
+                            pass
 
 print("Process have completed")
-
-test_file = "1-SGO_SI_ROM-0.csv"
-test_outputfile = "1-SGO_SI_ROM-0-cleaned.csv"
-
-with open(test_file) as csvfile, open(test_file)  as csvfile_out:
-    with open(test_outputfile,'w') as csvfile2:
-        csvfile_1 = csvfile.readlines()
-        csvfile_2 = csvfile_out.readlines()
-
-        new_list1 = list()
-        new_list0 = list()
-        isCont = False
-        for index,line in enumerate(csvfile_1):
-            new_list0 = line.split('","')
-            for i in range(len(new_list0)):
-                new_list0[i] = new_list0[i].replace('"','')
-                # print(new_list0[i])
-
-            ref_counter = index + 1
-            print("index is " + str(index))
-            line4 = ','.join(new_list0)
-            # print(line4)
-            for index2,line2 in enumerate(csvfile_2):   
-                new_list1 = line2.split('","')
-                for i in range(len(new_list1)):
-                    new_list1[i] = new_list1[i].replace('"','')
-                    if(ref_counter == index2):
-                        if new_list1[0] == "<CONT>": 
-                            isCont = True
-                            # print("this index2 is "+ str(index2))
-                            # print(str(index) + " OLD (new_list1) = " + str(new_list1))
-                            new_list1[0] =""
-                            for j in range(len(new_list0)):
-                                # print(new_list0[i])
-                                new_list1[j] = new_list0[j] + new_list1[j]
-                                if j == (len(new_list1) - 1):
-                                    new_list1[j] = new_list1[j][2:]
-                            
-                            # print(str(index) + " NEW (new_list1) = " + str(new_list1))
-                            # print(new_list1)
-                            line3 = ""
-                            for k in range(len(new_list1)):
-                                if k == 0:
-                                    line3 = '"' + new_list1[k] + '"'
-                                else:
-                                    line3 = line3 + "," + '"' + new_list1[k] + '"'
-                            print(new_list1)
-                            print(i)
-                            csvfile2.write(line3)
-                    else:
-                        pass
-
-            if "<CONT>" in new_list0[0]: 
-                print("this has " + str(new_list0[0]))
-            else: 
-                if isCont == True:
-                    isCont = False
-                    pass
-                else:
-                    line2 = ','.join(new_list0)
-                    print(new_list0)
-                    csvfile2.write(line)
-
-            print("----")
-
-
-def return_contents(file_name):
-    with open(file_name) as infile:
-        reader = csv.reader(infile)
-        return list(reader)
 
