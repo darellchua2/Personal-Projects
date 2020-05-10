@@ -225,6 +225,23 @@ def CreateSubFolder(keys_list,folder_name):
         new_foldername = new_foldername.replace('?','')
         createFolder(new_foldername)    
 
+def CreateUsableCSVToOutput(specific_keylist_values,folder2,folder3):
+    for i in range(len(specific_keylist_values)):
+        try:
+            if IsCorrectFile2(filepath,specific_keylist_values[i]) == True:
+                value = specific_keylist_values[i].replace('?','')
+                filepath2 = filepath.replace(folder2,(folder2 + os.sep + value[2:]))
+                shutil.move(filepath,filepath2)
+                filepath3 = filepath2.replace(folder2,folder3)
+                print(filepath3)
+                print(specific_keylist_values[i])
+                OutputUsableCSV8(filepath2,filepath3,specific_keylist_values[i])
+        except FileNotFoundError as error:
+            pass
+        except IndexError as error:
+            print(filepath2 + "this file has error")
+
+
 folder1 = "AGS to CSV - Compilation"
 folder2 = "Split CSV - Compilation"
 folder3 = "CSV Cleaning - Compilation"
@@ -271,14 +288,21 @@ for subdir, dirs, files in os.walk(folder2_dir):
                 if check == 0:
                     # print("yes this is matching file : " + master_key)
                     specific_keylist_values = master_keylist[master_key]
-                    for i in range(len(specific_keylist_values)):
-                        try:
-                            if IsCorrectFile2(filepath,specific_keylist_values[i]) == True:
-                                value = specific_keylist_values[i].replace('?','')
-                                filepath2 = filepath.replace(folder2,(folder2 + os.sep + value[2:]))
-                                shutil.move(filepath,filepath2)
-                        except FileNotFoundError as error:
-                            pass
+                    CreateUsableCSVToOutput(specific_keylist_values,folder2,folder3)
+
 
 print("Process have completed")
+
+# test_file = "3-SGO_SI_SK04-12.csv"
+# test_outputfile = "3-SGO_SI_SK04-12-cleaned.csv"
+
+# # with open(test_file) as csvfile:
+#     with open(test_outputfile,'w') as csvfile2:
+#         csvfile_1 = csvfile.readlines()
+#         for index,line in enumerate(csvfile_1):
+#             new_list0 = line.split('","')
+#             for i in range(len(new_list0)):
+#                 new_list0[i] = new_list0[i].replace('"','')
+#             print(new_list0[0][0:1])
+                
 
