@@ -291,7 +291,6 @@ folder1 = "AGS to CSV - Compilation"
 folder2 = "Split CSV - Compilation"
 folder3 = "CSV Cleaning - Compilation"
 
-createFolder(folder0)
 createFolder(folder1)
 createFolder(folder2)
 createFolder(folder3)
