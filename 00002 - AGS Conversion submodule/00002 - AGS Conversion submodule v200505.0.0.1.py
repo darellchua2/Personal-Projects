@@ -246,6 +246,7 @@ def ReformatHeader(test_file,test_outputfile):
                     new_list0[-1] = new_list0[-1][:-1]    
                     new_list2 = new_list0
 
+<<<<<<< HEAD
                     # print("this has " + str(new_list0[0]))
                 elif content_merge_var in new_list0[0] and index == 2:
                     new_list2 = new_list2 + new_list0
@@ -290,6 +291,44 @@ folder0 = "Source AGS - Compliation"
 folder1 = "AGS to CSV - Compilation"
 folder2 = "Split CSV - Compilation"
 folder3 = "CSV Cleaning - Compilation"
+=======
+test_file = "1-SGO_SI_ROM-0.csv"
+test_outputfile = "1-SGO_SI_ROM-0-cleaned.csv"
+
+with open(test_file) as csvfile:
+    with open(test_outputfile,'w') as csvfile2:
+        csvfile_1 = csvfile.readlines()
+        new_list1 = list()
+        new_list0 = list()
+        for index,line in enumerate(csvfile_1):
+            # print(line)
+            new_list0 = new_list1
+            # line = line.replace('"','')
+            new_list1 = line.split('","')
+            for i in range(len(new_list1)):
+                new_list1[i] = new_list1[i].replace('"','')
+
+            # print(len(new_list1))
+            
+            # print(str(index) + " (new_list0) = " + str(new_list0))
+            # print(str(index) + " (new_list1) = " + str(new_list1))
+            
+            if new_list1[0] == "<CONT>": 
+                ref_counter = index - 1
+                print(str(index) + " OLD (new_list0) = " + str(new_list0))
+                print(str(index) + " OLD (new_list1) = " + str(new_list1))
+                new_list1[0] = ""
+                for i in range (0,len(new_list1)):
+                    try:
+                        new_list1[i] = new_list0[i] + new_list1[i]
+                    except IndexError as error:
+                        print("this has exceeded index")
+                # print(str(index) + " NEW (new_list0) = " + str(new_list0))
+                print(str(index) + " NEW (new_list1) = " + str(new_list1))
+            print("----")
+
+import csv
+>>>>>>> parent of 77943af... Resolved "CONT" ISSUES.
 
 createFolder(folder1)
 createFolder(folder2)
@@ -341,3 +380,19 @@ print("Process have completed")
 test_file = "ERROR\\3-SGO_SI_SK04-12.csv"
 test_outputfile = "ERROR\\3-SGO_SI_SK04-12-cleaned.csv"
 
+# data1 = return_contents(test_file)
+# data2 = return_contents(test_file)
+
+# print(data1)
+# print(data2)
+
+# combined = []
+# for row in data1:
+#     combined.extend(row)
+
+# for row in data2:
+#     combined.extend(row)
+
+# with open('csv_out.csv', 'w', newline='') as outfile:
+#     writer = csv.writer(outfile)
+#     writer.writerow(combined)
