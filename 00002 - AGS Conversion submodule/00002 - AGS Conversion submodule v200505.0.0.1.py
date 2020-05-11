@@ -280,6 +280,15 @@ def CreateUsableCSVToOutput(specific_keylist_values,folder2,folder3):
                 print(filepath3)
                 print(specific_keylist_values[i])
                 OutputUsableCSV8(filepath2,filepath3,specific_keylist_values[i])
+                base_file,ext = os.path.splitext(filepath3)
+                filepath4 = base_file + "-cleaned1" + ext
+                filepath5 = base_file + "-cleaned2" + ext
+                RemoveCONT(filepath3,filepath4)
+                ReformatHeader(filepath4,filepath5)
+                os.remove(filepath4)
+                os.remove(filepath3)
+                os.remove(filepath2)
+
 
         except FileNotFoundError as error:
             pass
@@ -338,6 +347,5 @@ for subdir, dirs, files in os.walk(folder2_dir):
 
 print("Process have completed")
 
-test_file = "ERROR\\3-SGO_SI_SK04-12.csv"
-test_outputfile = "ERROR\\3-SGO_SI_SK04-12-cleaned.csv"
+
 
