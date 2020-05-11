@@ -286,11 +286,12 @@ def CreateUsableCSVToOutput(specific_keylist_values,folder2,folder3):
         except IndexError as error:
             print(filepath2 + "this file has error")
 
-
+folder0 = "Source AGS - Compliation"
 folder1 = "AGS to CSV - Compilation"
 folder2 = "Split CSV - Compilation"
 folder3 = "CSV Cleaning - Compilation"
 
+createFolder(folder0)
 createFolder(folder1)
 createFolder(folder2)
 createFolder(folder3)
