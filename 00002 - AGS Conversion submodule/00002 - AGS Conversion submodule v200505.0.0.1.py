@@ -225,6 +225,50 @@ def CreateSubFolder(keys_list,folder_name):
         new_foldername = new_foldername.replace('?','')
         createFolder(new_foldername)    
 
+def ReformatHeader(test_file,test_outputfile):
+    content_merge_var = "*"
+    with open(test_file) as csvfile, open(test_file)  as csvfile_out:
+        with open(test_outputfile,'w') as csvfile2:
+            csvfile_1 = csvfile.readlines()
+            csvfile_2 = csvfile_out.readlines()
+
+            new_list1 = list()
+            new_list0 = list()
+            new_list2 = list()
+            isCont = False
+            for index,line in enumerate(csvfile_1):
+                new_list0 = line.split('","')
+                for i in range(len(new_list0)):
+                    new_list0[i] = new_list0[i].replace('"','')
+                    # print(new_list0[i])
+                if content_merge_var in new_list0[0] and index == 1: 
+                    new_list0[-1] = new_list0[-1].strip()
+                    new_list0[-1] = new_list0[-1][:-1]    
+                    new_list2 = new_list0
+
+                    # print("this has " + str(new_list0[0]))
+                elif content_merge_var in new_list0[0] and index == 2:
+                    new_list2 = new_list2 + new_list0
+                    for k in range(len(new_list2)):
+                        line2 = ','.join(new_list2)
+                        # if k == 0:
+                        #     line = new_list2[k]
+                        # elif k == len(new_list2)-1:
+                        #     line = line + "," + '"' + new_list2[k] + '\n"'
+                        # else:
+                        #     line = line + "," + '"' + new_list2[k] + '"'
+                    # print(new_list2)
+                    csvfile2.write(line2)
+                elif index == 3:
+                    new_list2 = new_list0
+                    for k in range(len(new_list2)):
+                        line2 = ','.join(new_list2)
+                    csvfile2.write(line)
+
+                else: 
+                    line2 = ','.join(new_list0)
+                    # print(new_list0)
+                    csvfile2.write(line)
 def CreateUsableCSVToOutput(specific_keylist_values,folder2,folder3):
     for i in range(len(specific_keylist_values)):
         try:
@@ -236,6 +280,7 @@ def CreateUsableCSVToOutput(specific_keylist_values,folder2,folder3):
                 print(filepath3)
                 print(specific_keylist_values[i])
                 OutputUsableCSV8(filepath2,filepath3,specific_keylist_values[i])
+
         except FileNotFoundError as error:
             pass
         except IndexError as error:
@@ -293,16 +338,6 @@ for subdir, dirs, files in os.walk(folder2_dir):
 
 print("Process have completed")
 
-# test_file = "3-SGO_SI_SK04-12.csv"
-# test_outputfile = "3-SGO_SI_SK04-12-cleaned.csv"
-
-# # with open(test_file) as csvfile:
-#     with open(test_outputfile,'w') as csvfile2:
-#         csvfile_1 = csvfile.readlines()
-#         for index,line in enumerate(csvfile_1):
-#             new_list0 = line.split('","')
-#             for i in range(len(new_list0)):
-#                 new_list0[i] = new_list0[i].replace('"','')
-#             print(new_list0[0][0:1])
-                
+test_file = "ERROR\\3-SGO_SI_SK04-12.csv"
+test_outputfile = "ERROR\\3-SGO_SI_SK04-12-cleaned.csv"
 
