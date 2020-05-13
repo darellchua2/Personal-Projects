@@ -290,11 +290,26 @@ def CreateUsableCSVToOutput(specific_keylist_values,folder2,folder3):
             
 
 def CombineTable(file1,folder_name = ""):
-    file_out = folder_name + " - Combined.csv"
-    df_out = pd.DataFrame()
-    df1 = pd.read_csv(file1, header = [0], skiprows = [1])
-    result = df_out.append(df1,sort=False)
-    result.to_csv(file_out)
+    file_out = folder_name + os.sep + FindBaseFolderName(folder_name) + " - Combined.csv"
+    if file_out == file1:
+        print("this is here")
+        pass
+    else:
+        try:
+            df_out = pd.DataFrame()
+            df1 = pd.read_csv(file1, header = [0], skiprows = [1])
+            result = df_out.append(df1,sort=False)
+            result.to_csv(file_out)
+        except FileNotFoundError:
+            df_out = pd.DataFrame()
+            df_out.to_csv(file_out)
+
+
+
+def FindBaseFolderName(target_dir):
+    return os.path.basename(target_dir)
+
+
 
 async def GetFolderList():
     ref_folder = "CSV Cleaning - Compilation"
@@ -310,10 +325,10 @@ async def GetFolderList():
             FolderList.append(last_folder_name)
     return FolderList
 
-# folder0 = "Source AGS - Compliation"
-# folder1 = "AGS to CSV - Compilation"
-# folder2 = "Split CSV - Compilation"
-# folder3 = "CSV Cleaning - Compilation"
+folder0 = "Source AGS - Compliation"
+folder1 = "AGS to CSV - Compilation"
+folder2 = "Split CSV - Compilation"
+folder3 = "CSV Cleaning - Compilation"
 #
 # createFolder(folder1)
 # createFolder(folder2)
@@ -361,10 +376,17 @@ async def GetFolderList():
 
 print("Process have completed")
 
-file1 = "5-SGO SI LIM CHU KANG SINGAPORE-10-cleaned2.csv"
-file2 = "1-SGO_SI_ROM-10-cleaned2.csv"
+
 file_out = "Combined.csv"
 currDir = os.getcwd()
-CombineTable(file1,"ABBR")
+
+target_dir1 = currDir + os.sep + folder3 + os.sep + "ISPT"
+target_dir2 = currDir + os.sep + folder3 + os.sep + "HOLE"
+for subdir,dirs,files in os.walk(target_dir1):
+    for file in files:
+        filepath = subdir + os.sep + file
+        # print(subdir)
+        # print(FindBaseFolderName(subdir))
+        CombineTable(filepath,subdir)
 print(asyncio.run(GetFolderList()))
 
