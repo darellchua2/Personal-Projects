@@ -2,6 +2,7 @@ import os
 import csv
 import shutil
 import pandas as pd
+import asyncio
 
 def FindIndexInCSVToSplit(file):
     index = 0
@@ -282,81 +283,88 @@ def CreateUsableCSVToOutput(specific_keylist_values,folder2,folder3):
                 os.remove(filepath3)
                 os.remove(filepath2)
 
-
         except FileNotFoundError as error:
             pass
         except IndexError as error:
             print(filepath2 + "this file has error")
             
-def CombineTable(file1,file2):
-    df1 = pd.read_csv(file1,header = [0,1])
-    df2 = pd.read_csv(file2,header = [0,1])
-    print(df1["*HOLE_CREW"])
-    print(df2["*HOLE_CREW"])
-    result = df1.append(df2,ignore_index=True, sort=False)
+
+def CombineTable(file1,folder_name = ""):
+    file_out = folder_name + " - Combined.csv"
+    df_out = pd.DataFrame()
+    df1 = pd.read_csv(file1, header = [0], skiprows = [1])
+    result = df_out.append(df1,sort=False)
     result.to_csv(file_out)
-folder0 = "Source AGS - Compliation"
-folder1 = "AGS to CSV - Compilation"
-folder2 = "Split CSV - Compilation"
-folder3 = "CSV Cleaning - Compilation"
 
-createFolder(folder1)
-createFolder(folder2)
-createFolder(folder3)
+async def GetFolderList():
+    ref_folder = "CSV Cleaning - Compilation"
+    currDir = os.getcwd()
+    target_dir = currDir + os.sep + ref_folder
+    FolderList = list()
+    for subdir, dir,files in os.walk(target_dir):
+        if subdir == target_dir:
+            pass
+        else:
+            last_folder_name = os.path.basename(subdir)
+            # print(last_folder_name)
+            FolderList.append(last_folder_name)
+    return FolderList
 
-currDir = os.getcwd()
-master_keylist = {}
-for subdir, dirs, files in os.walk(currDir):
-    for file in files:
-        base_file, ext = os.path.splitext(file)
-        filepath = subdir + os.sep + file
-        # print(filepath)
-        if filepath.endswith(".ags"):
-            print("This is the file i want to find " + filepath)
-            output_file = CreateFileWithNewExtension(file,folder1,".ags",".csv")
-            index_dict = FindIndexInCSVToSplit(output_file)
-            keys_list, start_index_list, end_index_list = PrepareList(index_dict)
-            CreateSubFolder(keys_list,folder2)
-            CreateSubFolder(keys_list,folder3)
-            output_file2 = output_file.replace(folder1,folder2)
-            SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
-            master_keylist[base_file] = keys_list
-
-print(master_keylist)
-folder2_dir = currDir + os.sep + folder2
-print("this is folder2_dir path " + folder2_dir)
-for subdir, dirs, files in os.walk(folder2_dir):
-    for file in files:
-        base_file, ext = os.path.splitext(file)
-        filepath = subdir + os.sep + file
-        # print(base_file)
-        if filepath.endswith(".csv"):
-            index_dict = FindIndexInCSVToSplit(filepath)
-            keys_list, start_index_list, end_index_list = PrepareList(index_dict)
-            # print(filepath)
-            specific_keylist_values = list()
-            for master_key in master_keylist:
-                # print(master_key)
-                check = base_file.find(master_key)
-                if check == 0:
-                    # print("yes this is matching file : " + master_key)
-                    specific_keylist_values = master_keylist[master_key]
-                    CreateUsableCSVToOutput(specific_keylist_values,folder2,folder3)
+# folder0 = "Source AGS - Compliation"
+# folder1 = "AGS to CSV - Compilation"
+# folder2 = "Split CSV - Compilation"
+# folder3 = "CSV Cleaning - Compilation"
+#
+# createFolder(folder1)
+# createFolder(folder2)
+# createFolder(folder3)
+#
+# currDir = os.getcwd()
+# master_keylist = {}
+# for subdir, dirs, files in os.walk(currDir):
+#     for file in files:
+#         base_file, ext = os.path.splitext(file)
+#         filepath = subdir + os.sep + file
+#         # print(filepath)
+#         if filepath.endswith(".ags"):
+#             print("This is the file i want to find " + filepath)
+#             output_file = CreateFileWithNewExtension(file,folder1,".ags",".csv")
+#             index_dict = FindIndexInCSVToSplit(output_file)
+#             keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+#             CreateSubFolder(keys_list,folder2)
+#             CreateSubFolder(keys_list,folder3)
+#             output_file2 = output_file.replace(folder1,folder2)
+#             SplitCSVFiles(output_file,output_file2,keys_list, start_index_list, end_index_list)
+#             master_keylist[base_file] = keys_list
+#
+# print(master_keylist)
+# folder2_dir = currDir + os.sep + folder2
+# print("this is folder2_dir path " + folder2_dir)
+# for subdir, dirs, files in os.walk(folder2_dir):
+#     for file in files:
+#         base_file, ext = os.path.splitext(file)
+#         filepath = subdir + os.sep + file
+#         # print(base_file)
+#         if filepath.endswith(".csv"):
+#             index_dict = FindIndexInCSVToSplit(filepath)
+#             keys_list, start_index_list, end_index_list = PrepareList(index_dict)
+#             # print(filepath)
+#             specific_keylist_values = list()
+#             for master_key in master_keylist:
+#                 # print(master_key)
+#                 check = base_file.find(master_key)
+#                 if check == 0:
+#                     # print("yes this is matching file : " + master_key)
+#                     specific_keylist_values = master_keylist[master_key]
+#                     CreateUsableCSVToOutput(specific_keylist_values,folder2,folder3)
 
 
 print("Process have completed")
 
+file1 = "5-SGO SI LIM CHU KANG SINGAPORE-10-cleaned2.csv"
+file2 = "1-SGO_SI_ROM-10-cleaned2.csv"
+file_out = "Combined.csv"
+currDir = os.getcwd()
+CombineTable(file1,"ABBR")
+print(asyncio.run(GetFolderList()))
 
-
-# file1 = "5-SGO SI LIM CHU KANG SINGAPORE-10-cleaned2.csv"
-# file2 = "1-SGO_SI_ROM-10-cleaned2.csv"
-# file_out = "Combined.csv"
-# df1 = pd.read_csv(file1,header = [0,1])
-# df1 = df1.reindex(sorted(df1.columns), axis=1)
-# df2 = pd.read_csv(file2,header = [0,1])
-# df1 = df1.reindex(sorted(df1.columns), axis=1)
-#
-# result = df1.append(df2,sort = False)
-# result = result.reindex(sorted(result.columns), axis=1)
-# result.to_csv(file_out)
-# print("done")
