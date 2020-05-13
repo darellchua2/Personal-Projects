@@ -29,23 +29,24 @@ def FileFinder(target_Dir, target_file_extension, reference_file_extension_to_ma
                         for file2 in files2:
                             base_file2, ext2 = os.path.splitext(file2)
                             if base_file == base_file2 and ext2 == reference_file_extension_to_match:
-                                file_size = os.path.getsize(filepath)
-                                writer.writerow([filepath, file_size])
-                                print(filepath + "|||" + str(file_size))
-                                if isDel == "True":
-                                    try:
-                                        os.remove(filepath)
-                                        print(filepath + " has been deleted")
-                                    except PermissionError:
-                                        print('PermissionError do change')
-                                        win32api.SetFileAttributes(filepath, win32con.FILE_ATTRIBUTE_NORMAL)
-                                        os.remove(filepath)
-                                        writer.writerow([filepath, file_size], "Removed")
-                                    except FileNotFoundError:
-                                        print(filepath + ' not found')
-                                        pass
-                                elif isDel == "False":
-                                    print(filepath + " has not been deleted")
+                                try:
+                                    file_size = os.path.getsize(filepath)
+                                    writer.writerow([filepath, file_size])
+                                    print(filepath + "|||" + str(file_size))
+                                    if isDel == "True":
+                                        try:
+                                            os.remove(filepath)
+                                            print(filepath + " has been deleted")
+                                        except PermissionError:
+                                            print('PermissionError do change')
+                                            win32api.SetFileAttributes(filepath, win32con.FILE_ATTRIBUTE_NORMAL)
+                                            os.remove(filepath)
+                                            writer.writerow([filepath, file_size], "Removed")
+                                    elif isDel == "False":
+                                        print(filepath + " has not been deleted")
+                                except FileNotFoundError:
+                                    print(filepath + ' not found')
+                                    pass
 
     print("This has completed")
     input("Press Enter to Exit")
