@@ -16,7 +16,7 @@ import win32con, win32api
 #     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
 
 
-def FileFinder(target_Dir, target_file_extension, reference_file_extension_to_match, isDel = False):
+def FileFinder(target_Dir, target_file_extension, reference_file_extension_to_match, isDel = "False"):
     with open('File - Summary.csv', 'w', newline='') as output_file:
         writer = csv.writer(output_file)
         for subdir, dirs, files in os.walk(target_Dir):
@@ -32,7 +32,7 @@ def FileFinder(target_Dir, target_file_extension, reference_file_extension_to_ma
                                 file_size = os.path.getsize(filepath)
                                 writer.writerow([filepath, file_size])
                                 print(filepath + "|||" + str(file_size))
-                                if isDel == True:
+                                if isDel == "True":
                                     try:
                                         os.remove(filepath)
                                         print(filepath + " has been deleted")
@@ -40,14 +40,20 @@ def FileFinder(target_Dir, target_file_extension, reference_file_extension_to_ma
                                         print('PermissionError do change')
                                         win32api.SetFileAttributes(filepath, win32con.FILE_ATTRIBUTE_NORMAL)
                                         os.remove(filepath)
-
+                                        writer.writerow([filepath, file_size], "Removed")
+                                    except FileNotFoundError:
+                                        print(filepath + ' not found')
+                                        pass
+                                elif isDel == "False":
+                                    print(filepath + " has not been deleted")
 
     print("This has completed")
+    input("Press Enter to Exit")
 
 target_Dir = input("Please input the Root Folder you want to search from: ")
 target_file_extension = input("Source File Extension that you want to delete in the following format (e.g - .bak):").lower()
 reference_file_extension_to_match = input(" Ref File Extension in the following format (e.g - .dwg):").lower()
-isDel = bool(input("Do you want to delete found files? Key in 'True' for delete, 'False' for dont delete: "))
+isDel = input("Do you want to delete found files? Key in 'True' for delete, 'False' for dont delete: ")
 
 FileFinder(target_Dir, target_file_extension, reference_file_extension_to_match,isDel)
 
