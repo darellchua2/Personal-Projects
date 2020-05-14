@@ -295,14 +295,14 @@ def CombineTable(file1,folder_name = ""):
         print("this is here")
         pass
     else:
-        try:
-            df_out = pd.DataFrame()
+        if os.path.isfile(file_out):
+            df_out = pd.read_csv(file_out, header = [0])
             df1 = pd.read_csv(file1, header = [0], skiprows = [1])
             result = df_out.append(df1,sort=False)
-            result.to_csv(file_out)
-        except FileNotFoundError:
+            result.to_csv(file_out,index = False)
+        else:
             df_out = pd.DataFrame()
-            df_out.to_csv(file_out)
+            df_out.to_csv(file_out,index = False)
 
 
 
@@ -315,7 +315,7 @@ async def GetFolderList():
     ref_folder = "CSV Cleaning - Compilation"
     currDir = os.getcwd()
     target_dir = currDir + os.sep + ref_folder
-    FolderList = list()
+    FolderList = list()·
     for subdir, dir,files in os.walk(target_dir):
         if subdir == target_dir:
             pass
