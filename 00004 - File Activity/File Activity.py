@@ -3,23 +3,16 @@ import csv
 import os.path, time
 from datetime import date,datetime,timedelta
 
-today = date.today()
 
-# def is_admin():
-#     try:
-#         return ctypes.windll.shell32.IsUserAnAdmin()
-#     except:
-#         return False
-#
-# if is_admin():
-#     pass
-# else:
-#     # Re-run the program with admin rights
-#     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+import time
+start_time = time.time()
+
+
+today = date.today()
 
 
 def FileFinder(target_Dir, N = 2):
-    with open('File - Summary.csv', 'w', newline='') as output_file:
+    with open('File - Summary.csv', 'a', newline='') as output_file:
         ini_time_for_now = datetime.now()
         past_date_before = ini_time_for_now - \
                                  timedelta(days=N)
@@ -34,19 +27,24 @@ def FileFinder(target_Dir, N = 2):
                 created = os.path.getctime(filepath)
                 file_size = os.path.getsize(filepath)/(1024.0*1024.0)
                 if past_date_before <= datetime.fromtimestamp(last_modified):
-                    print(filepath, time.ctime(last_modified),time.ctime(created))
+                    # print(filepath, time.ctime(last_modified),time.ctime(created))
                     writer.writerow([filepath,time.ctime(created), time.ctime(last_modified), file_size])
 
 
-    print("This has completed")
-    input("Press Enter to Exit")
 
 # target_Dir = input("Please input the Root Folder you want to search from: ")
 
-target_Dir = "S:\\Projects\\Proposal\\LTA CR116\\"
+target_Dir1 = "S:\\Projects\\Proposal\\LTA CR116"
+target_Dir2 = "S:\\Projects\\Proposal\\CR103 (MCC)"
+target_Dir3 = "S:\\Projects\\Proposal\\KTC PE_JTC_Infrastructure Works_Bulim Phase 2"
 
 
-FileFinder(target_Dir)
+FileFinder(target_Dir1)
+FileFinder(target_Dir2)
+FileFinder(target_Dir3)
 
 
+
+print("This has completed")
+print("--- %s seconds ---" % (time.time() - start_time))
 
