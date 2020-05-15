@@ -315,7 +315,7 @@ async def GetFolderList():
     ref_folder = "CSV Cleaning - Compilation"
     currDir = os.getcwd()
     target_dir = currDir + os.sep + ref_folder
-    FolderList = list()·
+    FolderList = list()
     for subdir, dir,files in os.walk(target_dir):
         if subdir == target_dir:
             pass
@@ -390,4 +390,4 @@ for subdir,dirs,files in os.walk(target_dir1):
         CombineTable(filepath,subdir)
 print(asyncio.run(GetFolderList()))
 
-# ---
+
