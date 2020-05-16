@@ -1,14 +1,12 @@
-"""
 import bs4 as bs
 import urllib.request
+import urllib
 import csv
 
-source = urllib.request.urlopen('http://www.bigweb.co.jp/ver2/pd2.php?card_id=3105666').read()
-
+source = urllib.request.urlopen('https://yugioh.fandom.com/wiki/Set_Card_Lists:Deck_Build_Pack:_Mystic_Fighters_(OCG-JP)').read()
 
 soup = bs.BeautifulSoup(source,'lxml')
 print(soup.encode("utf-8"))
-
 
 f = csv.writer(open("OUTPUT.csv", "w", encoding="utf-8"))
 
@@ -18,7 +16,6 @@ for link in links:
     print(link)
     f.writerow([str(link)])
 
-"""
 import urllib
 from urllib.request import Request, urlopen
 import csv
@@ -26,17 +23,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 
-import io
-
-url = 'https://vignette.wikia.nocookie.net/yugioh/images/5/53/Pikari%40Ignister-IGAS-JP-R.png/revision/latest?cb=20191231105143'
-req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-webpage = urlopen(req)
-print (webpage.getcode())
-print (webpage.read())
-print(webpage)
-
-f = csv.writer(open("OUTPUT.csv", "w", encoding="utf-8"))
-f.writerow([webpage])
+url = 'https://vignette.wikia.nocookie.net/yugioh/images/a/a6/TenThousandDragon-IGAS-JP-10000ScR.png/revision/latest/scale-to-width-down/118?cb=20191025013811'
 
 urllib.request.urlretrieve(url, "pic1.png")
 
