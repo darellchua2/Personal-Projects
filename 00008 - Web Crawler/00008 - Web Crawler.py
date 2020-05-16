@@ -19,70 +19,30 @@ for link in links:
     f.writerow([str(link)])
 
 """
-# import urllib
-# from urllib.request import Request, urlopen
-# import csv
-# import requests
-#
-# import io
-#
-# url = 'https://yugioh.fandom.com/wiki/Set_Card_Galleries:Ignition_Assault_(OCG-JP)?file=TenThousandDragon-IGAS-JP-10000ScR.png'
-# req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-# webpage = urlopen(req)
-# print (webpage.getcode())
-# print (webpage.read())
-# print(webpage)
-#
-# f = csv.writer(open("OUTPUT.csv", "w", encoding="utf-8"))
-# f.writerow([webpage])
-#
-# urllib.request.urlretrieve(url, "pic1.png")
-#
-# response = requests.get(url)
-#
-# file = open("sample_image.png", "wb")
-# file.write(response.content)
-# print(response.content)
-# file.close()
-
-
+import urllib
+from urllib.request import Request, urlopen
+import csv
 import requests
-import os
-from tqdm import tqdm
-from bs4 import BeautifulSoup as bs
-from urllib.parse import urljoin, urlparse
+from PIL import Image
+from io import BytesIO
 
-def download(url, pathname):
-    """
-    Downloads a file given an URL and puts it in the folder `pathname`
-    """
-    # if path doesn't exist, make that path dir
-    if not os.path.isdir(pathname):
-        os.makedirs(pathname)
-    # download the body of response by chunk, not immediately
-    response = requests.get(url, stream=True)
-    # get the total file size
-    file_size = int(response.headers.get("Content-Length", 0))
-    # get the file name
-    filename = os.path.join(pathname, url.split("/")[-1])
-    # progress bar, changing the unit to bytes instead of iteration (default by tqdm)
-    progress = tqdm(response.iter_content(buffer_size), f"Downloading {filename}", total=file_size, unit="B", unit_scale=True, unit_divisor=1024)
-    with open(filename, "wb") as f:
-        for data in progress:
-            # write data read to the file
-            f.write(data)
-            # update the progress bar manually
-            progress.update(len(data))
+import io
 
-def get_all_images(url):
-    """
-    Returns all image URLs on a single `url`
-    """
-    soup = bs(requests.get(url).content, "html.parser")
+url = 'https://vignette.wikia.nocookie.net/yugioh/images/5/53/Pikari%40Ignister-IGAS-JP-R.png/revision/latest?cb=20191231105143'
+req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+webpage = urlopen(req)
+print (webpage.getcode())
+print (webpage.read())
+print(webpage)
 
-def main(url, path):
-    # get all images
-    imgs = get_all_images(url)
-    for img in imgs:
-        # for each image, download it
-        download(img, path)
+f = csv.writer(open("OUTPUT.csv", "w", encoding="utf-8"))
+f.writerow([webpage])
+
+urllib.request.urlretrieve(url, "pic1.png")
+
+response = requests.get(url)
+name = f"test.png"
+filename = f"./downloads/{name}"
+img = Image.open(BytesIO(response.content))
+img.save(filename)
+img = ""
