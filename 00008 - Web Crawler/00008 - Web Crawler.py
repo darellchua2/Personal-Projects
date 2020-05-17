@@ -58,11 +58,13 @@ url1 = 'https://yugioh.fandom.com/wiki/Set_Card_Lists:Deck_Build_Pack:_Mystic_Fi
 # url2 = 'https://yugioh.fandom.com/wiki/Set_Card_Galleries:Deck_Build_Pack:_Mystic_Fighters_(OCG-JP)'
 #
 # html_tag = "tr"
-output_file1 = "DBMF - CardList - tr.csv" #change this to your own file output
+output_file1 = "DBMF - CardList - tr1.csv" #change this to your own file output
 # output_file2 = "DBMF - CardGallery - img.csv" #change this to your own file output
 # output_file3 = "DBMF - CardGallery - img2.csv" #change this to your own file output
 # output_file4 = "DBMF - CardList - a.csv" #change this to your own file output
 # output_file5 = "DBMF - CardList - td.csv" #change this to your own file output
+output_file6 = "DBMF - CardList - tr1.csv" #change this to your own file output
+
 #
 #
 #
@@ -75,7 +77,7 @@ output_file1 = "DBMF - CardList - tr.csv" #change this to your own file output
 # # for link in links:
 # #     print(link.name,link.text)
 #
-OutputHTMLFileSummary(url1,"tr",output_file1)
+# OutputHTMLFileSummary(url1,"tr",output_file1)
 # # OutputHTMLFileSummary(url2,"img",output_file2)
 # # OutputHTMLFileSummaryIMG(url2,"img",output_file3)
 # OutputHTMLFileSummary(url2,"a",output_file4)
@@ -92,7 +94,45 @@ output_file1_2 = "DBMF - CardList - tr2.csv" #change this to your own file outpu
 #                 new_row = row[0].replace("<a>",",")
 #                 print(new_row)
 
-array = []
-for item in soup.findAll('tr', {'valign': 'top'}):
-     array.append([f.text.strip().replace("\xa0\n\t", "") for f in item.findAll("td")])
+
+
+def OutputHTMLFileSummary2(url,html_tag,output_file):
+    array = []
+    source = urllib.request.urlopen(url).read()
+    soup = bs.BeautifulSoup(source, 'html.parser')
+    f = csv.writer(open(output_file, "w", encoding="utf-8"))
+    links = soup.find_all(html_tag)
+
+    counter = 0.0
+    for link in links:
+        counter += 1
+        if (counter/2) != 0.0:
+            array.append([f.text.strip().replace("\xa0\n\t", "") for f in link.find_all("td")])
+            print(counter)
+        else:
+            pass
+    print(array)
+    for i in range(len(array)):
+        f.writerow([array[i]])
+    df = pd.DataFrame()
+    df["Data"] = array
+    return df
+df = OutputHTMLFileSummary2(url1,"tr",output_file6)
+df = df.drop([0])
+df = df.replace({'[':''}, regex=True)
+# print(df)
+# for i in range(len(df)):
+#     df.iloc[i] = df.iloc[i].replace("[","")
+#     df.iloc[i] = df.iloc[i].replace("]","")
+#     print(df.iloc[i])
+
+
+df.count
+df.to_csv("output.csv",index = False)
+with open("output.csv","r", encoding="utf-8") as csvfile:
+    reader = csv.reader(csvfile)
+    for row in reader:
+        new_row = row[0].replace("[","")
+        new_row = new_row.replace("]","")
+        print(new_row)
 
