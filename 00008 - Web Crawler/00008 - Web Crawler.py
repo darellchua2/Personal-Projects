@@ -117,9 +117,9 @@ def OutputHTMLFileSummary2(url,html_tag,output_file):
     df = pd.DataFrame()
     df["Data"] = array
     return df
-df = OutputHTMLFileSummary2(url1,"tr",output_file6)
-df = df.drop([0])
-df = df.replace({'[':''}, regex=True)
+# df = OutputHTMLFileSummary2(url1,"tr",output_file6)
+# df = df.drop([0])
+# df = df.replace({'[':''}, regex=True)
 # print(df)
 # for i in range(len(df)):
 #     df.iloc[i] = df.iloc[i].replace("[","")
@@ -127,12 +127,31 @@ df = df.replace({'[':''}, regex=True)
 #     print(df.iloc[i])
 
 
-df.count
-df.to_csv("output.csv",index = False)
+# df.count
+# df.to_csv("output.csv",index = False)
 with open("output.csv","r", encoding="utf-8") as csvfile:
     reader = csv.reader(csvfile)
-    for row in reader:
-        new_row = row[0].replace("[","")
-        new_row = new_row.replace("]","")
-        print(new_row)
+    new_list = []
+    with open("output2.csv", "a", encoding="utf-8") as csvfile2:
+        f = csv.writer(csvfile2)
+        new_list =[]
+        new_list2 =[]
 
+        for row in reader:
+            new_row = row[0]
+            new_row = row[0].replace("[","")
+            new_row = new_row.replace("]","")
+            new_row = new_row.replace('"',"")
+            new_list = new_row.split(",")
+            print(new_row)
+            for i in range(len(new_list)):
+                new_list[i] = new_list[i].replace("'",'')
+                new_list[i] = new_list[i].replace('\\','')
+            print(len(new_list))
+
+print("done")
+
+# with open("output2.csv","r", encoding="utf-8") as csvfile3:
+#     reader = csv.reader(csvfile3)
+#     for row in reader:
+#         print(row)
