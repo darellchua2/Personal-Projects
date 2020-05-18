@@ -59,6 +59,7 @@ def OutputHTMLFileSummaryIMG(url,html_tag,output_file):
 
 url1 = 'https://yugipedia.com/wiki/Set_Card_Lists:Deck_Build_Pack:_Mystic_Fighters_(OCG-JP)'
 url2 = 'https://yugipedia.com/wiki/Set_Card_Galleries:Deck_Build_Pack:_Mystic_Fighters_(OCG-JP)'
+url3 = 'https://yugipedia.com/wiki/Mathmech_Sigma'
 #
 # html_tag = "tr"
 output_file1 = "DBMF - CardList - tr1.csv" #change this to your own file output
@@ -84,8 +85,9 @@ def OutputCardList(url,html_tag,output_file,sub_tag):
             df.loc[i] = lists[i]
             df.to_csv(output_file)
     print(df)
+    return df
 
-# OutputCardList(url1,"tr",output_file6,"td")
+df1 = OutputCardList(url1,"tr",output_file6,"td")
 
 def OutputHTMLFileSummaryIMG2(url,html_tag,output_file,check_string):
     df = pd.DataFrame(columns = ("Card Name","Card URL"))
@@ -110,5 +112,8 @@ def OutputHTMLFileSummaryIMG2(url,html_tag,output_file,check_string):
     print(df)
     return df
 
-OutputHTMLFileSummaryIMG2(url2,"img",output_file7,"DBMF")
+df2 = OutputHTMLFileSummaryIMG2(url2,"img",output_file7,"DBMF")
+
+df_new = pd.merge(df1,df2,on = ["Card Name"])
+df_new.to_csv("OVERALL.CSV")
 
