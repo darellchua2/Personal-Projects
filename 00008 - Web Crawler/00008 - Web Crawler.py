@@ -63,7 +63,7 @@ url3 = 'https://yugipedia.com/wiki/Mathmech_Sigma'
 #
 # html_tag = "tr"
 output_file1 = "DBMF - CardList - tr1.csv" #change this to your own file output
-output_file2 = "DBMF - Card - MathMech - a.csv" #change this to your own file output
+output_file2 = "DBMF - Card - MathMech - tr.csv" #change this to your own file output
 output_file6 = "DBMF - CardList - tr1.csv" #change this to your own file output
 output_file7 = "DBMF - CardGallery - img.csv" #change this to your own file output
 output_file1_2 = "DBMF - CardList - tr2.csv" #change this to your own file output
@@ -118,5 +118,30 @@ def OutputCardGallery(url,html_tag,output_file,check_string):
 # df_new = pd.merge(df1,df2,on = ["Card Name"])
 # df_new.to_csv("OVERALL.CSV")
 
-OutputHTMLFileSummary(url3,"a",output_file2)
+
+def OutputCard(url,html_tag):
+
+    card_names = url.rsplit("/",1)
+    card_data = []
+    card_data.append(card_names[1])
+    counter = 0
+    df = pd.DataFrame(columns = ("Card Name","Card Type","Attribute", "Types","Level/Rank/Link","ATK/DEF","Passcode","Lore"))
+    source = urllib.request.urlopen(url).read()
+    soup = bs.BeautifulSoup(source, 'html.parser')
+    links = soup.find_all(html_tag)
+    for link in links:
+        counter += 1
+        if len(link.text) != 1:
+            print(str(len(link.text)) + " this is " + link.text)
+            data = link.text
+            data = data.strip('\n')
+            card_data.append(data)
+    print(len(card_data))
+    df.loc[0] = card_data
+    df.iloc[0,0] = df.iloc[0,0].replace("_"," ")
+    df.to_csv(card_names[1] + ".csv")
+    return df
+
+
+OutputCard(url3,"p")
 
