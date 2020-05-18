@@ -86,7 +86,7 @@ output_file6 = "DBMF - CardList - tr1.csv" #change this to your own file output
 output_file1_2 = "DBMF - CardList - tr2.csv" #change this to your own file output
 
 
-def OutputCardList(url,html_tag,output_file):
+def OutputCardList(url,html_tag,output_file,sub_tag):
     lists = []
     counter = 0
     df = pd.DataFrame(columns = ("CODE","Card Name","Card Name(Japanese)", "Rarity","Card Type","Status"))
@@ -96,8 +96,7 @@ def OutputCardList(url,html_tag,output_file):
     links = soup.find_all(html_tag)
     for link in links:
         counter += 1
-        # list.append([f.text.strip().replace("\xa0\n\t", "") for f in link.find_all("td")])
-        lists.append([f.text.strip().replace("\xa0\n\t", "") for f in link.find_all("td")])
+        lists.append([f.text.strip().replace("\xa0\n\t", "") for f in link.find_all(sub_tag)])
     for i in range(len(lists)):
         print(i)
         if i/2 != 0 and i>1:
@@ -106,4 +105,4 @@ def OutputCardList(url,html_tag,output_file):
             df.to_csv(output_file6)
     print(df)
 
-OutputCardList(url1,"tr",output_file6)
+OutputCardList(url1,"tr",output_file6,"td")
