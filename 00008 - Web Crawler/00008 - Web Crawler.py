@@ -63,6 +63,7 @@ url3 = 'https://yugipedia.com/wiki/Mathmech_Sigma'
 #
 # html_tag = "tr"
 output_file1 = "DBMF - CardList - tr1.csv" #change this to your own file output
+output_file2 = "DBMF - Card - MathMech - a.csv" #change this to your own file output
 output_file6 = "DBMF - CardList - tr1.csv" #change this to your own file output
 output_file7 = "DBMF - CardGallery - img.csv" #change this to your own file output
 output_file1_2 = "DBMF - CardList - tr2.csv" #change this to your own file output
@@ -87,9 +88,9 @@ def OutputCardList(url,html_tag,output_file,sub_tag):
     print(df)
     return df
 
-df1 = OutputCardList(url1,"tr",output_file6,"td")
+# df1 = OutputCardList(url1,"tr",output_file6,"td")
 
-def OutputHTMLFileSummaryIMG2(url,html_tag,output_file,check_string):
+def OutputCardGallery(url,html_tag,output_file,check_string):
     df = pd.DataFrame(columns = ("Card Name","Card URL"))
     source = urllib.request.urlopen(url).read()
     soup = bs.BeautifulSoup(source, 'html.parser')
@@ -112,8 +113,10 @@ def OutputHTMLFileSummaryIMG2(url,html_tag,output_file,check_string):
     print(df)
     return df
 
-df2 = OutputHTMLFileSummaryIMG2(url2,"img",output_file7,"DBMF")
+# df2 = OutputCardGallery(url2,"img",output_file7,"DBMF")
+#
+# df_new = pd.merge(df1,df2,on = ["Card Name"])
+# df_new.to_csv("OVERALL.CSV")
 
-df_new = pd.merge(df1,df2,on = ["Card Name"])
-df_new.to_csv("OVERALL.CSV")
+OutputHTMLFileSummary(url3,"a",output_file2)
 
