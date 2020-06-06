@@ -7,7 +7,7 @@ from io import BytesIO
 import os
 import pandas as pd
 import re
-
+import time
 
 
 def CreateFolder(folder_name):
@@ -57,22 +57,13 @@ def OutputHTMLFileSummaryIMG(url,html_tag,output_file):
             f.writerow([link.name, link.title, link["src"], link.text, str(link)])
 
 
-url1 = 'https://yugipedia.com/wiki/Set_Card_Lists:Deck_Build_Pack:_Mystic_Fighters_(OCG-JP)'
-url2 = 'https://yugipedia.com/wiki/Set_Card_Galleries:Deck_Build_Pack:_Mystic_Fighters_(OCG-JP)'
-url3 = 'https://yugipedia.com/wiki/Mathmech_Sigma'
-#
-# html_tag = "tr"
-output_file1 = "DBMF - CardList - tr1.csv" #change this to your own file output
-output_file2 = "DBMF - Card - MathMech - tr.csv" #change this to your own file output
-output_file6 = "DBMF - CardList - tr1.csv" #change this to your own file output
-output_file7 = "DBMF - CardGallery - img.csv" #change this to your own file output
-output_file1_2 = "DBMF - CardList - tr2.csv" #change this to your own file output
+
 
 
 def OutputCardList(url,html_tag,output_file,sub_tag):
     lists = []
     counter = 0
-    df = pd.DataFrame(columns = ("CODE","Card Name","Card Name(Japanese)", "Rarity","Card Type","Status"))
+    df = pd.DataFrame(columns = ("CODE","Card Name","Card Name(Japanese)", "Rarity","Card Type"))
     source = urllib.request.urlopen(url).read()
     soup = bs.BeautifulSoup(source, 'html.parser')
     f = csv.writer(open(output_file, "w", encoding="utf-8"))
@@ -81,14 +72,16 @@ def OutputCardList(url,html_tag,output_file,sub_tag):
         counter += 1
         lists.append([f.text.strip().replace("\xa0\n\t", "") for f in link.find_all(sub_tag)])
     for i in range(len(lists)):
-        if i/2 != 0 and i>1:
-            lists[i][1] = lists[i][1].strip('"')
-            df.loc[i] = lists[i]
-            df.to_csv(output_file)
-    print(df)
+        if i/2 != 0 and i>1 and "NPR":
+            if "NPR" in lists[i]:
+                pass
+            else:
+                print(lists[i])
+                lists[i][1] = lists[i][1].strip('"')
+                df.loc[i] = lists[i]
+                df.to_csv(output_file)
     return df
 
-# df1 = OutputCardList(url1,"tr",output_file6,"td")
 
 def OutputCardGallery(url,html_tag,output_file,check_string):
     df = pd.DataFrame(columns = ("Card Name","Card URL"))
@@ -98,7 +91,7 @@ def OutputCardGallery(url,html_tag,output_file,check_string):
     links = soup.find_all(html_tag)
     counter = 0
     for i in range(len(links)):
-        # print(type(tag["src"]))
+        print(links[i])
         img_src = links[i]["src"]
         if check_string in img_src:
             img_src = img_src.replace('/thumb','')
@@ -106,17 +99,13 @@ def OutputCardGallery(url,html_tag,output_file,check_string):
             card_name = img_src_splitlist[1].split('-',1)
             card_name[0] = re.sub(r"(\w)([A-Z])", r"\1 \2", card_name[0])
             new_list = [card_name[0],img_src_splitlist[0] + "/" + img_src_splitlist[1]]
-            print(new_list)
             df.loc[counter] = new_list
             counter += 1
+    # print(df)
     df.to_csv(output_file)
-    print(df)
     return df
 
-# df2 = OutputCardGallery(url2,"img",output_file7,"DBMF")
-#
-# df_new = pd.merge(df1,df2,on = ["Card Name"])
-# df_new.to_csv("OVERALL.CSV")
+
 
 
 def OutputCard(url,html_tag):
@@ -140,8 +129,30 @@ def OutputCard(url,html_tag):
     df.loc[0] = card_data
     df.iloc[0,0] = df.iloc[0,0].replace("_"," ")
     df.to_csv(card_names[1] + ".csv")
+    time.sleep(1)
     return df
 
+url1 = 'https://yugipedia.com/wiki/Set_Card_Lists:Gold_Pack_2016_(OCG-JP)'
+url2 = 'https://yugipedia.com/wiki/Set_Card_Galleries:Gold_Pack_2016_(OCG-JP)'
+#
+# html_tag = "tr"
+output_file1 = "DBMF - CardList - tr1.csv" #change this to your own file output
+output_file2 = "DBMF - Card - MathMech - tr.csv" #change this to your own file output
+output_file6 = "DBMF - CardList - tr1.csv" #change this to your own file output
+output_file7 = "DBMF - CardGallery - img.csv" #change this to your own file output
+output_file1_2 = "DBMF - CardList - tr2.csv" #change this to your own file output
+output_file8 = "GP16 - CardList - tr.csv" #change this to your own file output
+output_file9 = "GP16 - CardGallery - img.csv" #change this to your own file output
 
-OutputCard(url3,"p")
+
+df1 = OutputCardList(url1,"tr",output_file8,"td")
+df2 = OutputCardGallery(url2,"img",output_file9,"GP16")
+
+df_new = pd.merge(df1,df2,how = "left", on = ["Card Name"])
+df_new.to_csv("GP16 - OVERALL.CSV")
+count = df_new["Card URL"]
+for value in df_new["Card Name"]:
+    value = value.replace(" ","_")
+    print(value)
+
 

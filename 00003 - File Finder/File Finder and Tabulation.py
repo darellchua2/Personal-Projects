@@ -1,20 +1,6 @@
 import os
 import csv
-import ctypes, sys
 import win32con, win32api
-
-# def is_admin():
-#     try:
-#         return ctypes.windll.shell32.IsUserAnAdmin()
-#     except:
-#         return False
-#
-# if is_admin():
-#     pass
-# else:
-#     # Re-run the program with admin rights
-#     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-
 
 def FileFinder(target_Dir, target_file_extension, reference_file_extension_to_match, isDel = "False"):
     with open('File - Summary.csv', 'w', newline='') as output_file:
@@ -22,7 +8,6 @@ def FileFinder(target_Dir, target_file_extension, reference_file_extension_to_ma
         for subdir, dirs, files in os.walk(target_Dir):
             for file in files:
                 base_file, ext = os.path.splitext(file)
-                # print(subdir)
                 filepath = subdir + os.sep + file
                 if filepath.endswith(target_file_extension):
                     for subdir2, dirs2, files2 in os.walk(subdir):
@@ -31,7 +16,7 @@ def FileFinder(target_Dir, target_file_extension, reference_file_extension_to_ma
                             if base_file == base_file2 and ext2 == reference_file_extension_to_match:
                                 try:
                                     file_size = os.path.getsize(filepath)
-                                    writer.writerow([filepath, file_size])
+                                    writer.writerow([filepath.encode("utf-8"), file_size])
                                     print(filepath + "|||" + str(file_size))
                                     if isDel == "True":
                                         try:
@@ -41,7 +26,7 @@ def FileFinder(target_Dir, target_file_extension, reference_file_extension_to_ma
                                             print('PermissionError do change')
                                             win32api.SetFileAttributes(filepath, win32con.FILE_ATTRIBUTE_NORMAL)
                                             os.remove(filepath)
-                                            writer.writerow([filepath, file_size], "Removed")
+                                            writer.writerow([filepath.encode("utf-8"), file_size], "Removed")
                                     elif isDel == "False":
                                         print(filepath + " has not been deleted")
                                 except FileNotFoundError:
