@@ -2,6 +2,7 @@ import os
 import csv
 import win32con, win32api
 import pandas as pd
+import numpy as np
 
 def FileFinder(target_Dir, target_file_extension, reference_file_extension_to_match, isDel = "False"):
     with open('File - Summary.csv', 'w', newline='') as output_file:
@@ -56,7 +57,7 @@ def FileFinder2(target_Dir, target_file_extension):
                 dict["filename_ent"] = file + ".ent"
                 l.append(dict)
                 dict = {}
-                print(l)
+                # print(l)
     # df = pd.DataFrame(l,columns =["FilePath","subdir","filename","filename_ent","file_size_bytes"])
     df = pd.DataFrame(l)
     df["check"] = pd.Series(index = df.index)
@@ -66,23 +67,21 @@ def FileFinder2(target_Dir, target_file_extension):
     l2 = []
     l3 = []
     for i in range(df.shape[0]):
-        filename_ent = df["filename_ent"][i]
         for j in range(df.shape[0]):
-            filepath2 = df["FilePath"][j]
-            # print(filepath2,filename_ent)
-            if filename_ent in df["FilePath"][j]:
+            subdir_check = df["subdir"][j] + "/ent"
+            if df["filename_ent"][i] in df["FilePath"][j] and df["subdir"][i] in subdir_check:
                 # print(i,j,type(filepath2))
                 check = "Yes"
                 directory_that_has_duplicate = df["FilePath"][j]
-                print(i,j,filepath2, filename_ent)
+                # print(i,j,df["FilePath"][j], df["filename_ent"][i])
                 break
             else:
                 check = "No"
-                directory_that_has_duplicate = ""
+                directory_that_has_duplicate = np.NaN
 
         l2.append(check)
         l3.append(directory_that_has_duplicate)
-        print(len(l2))
+        # print(len(l2))
     df["check"] = l2
     df["directory_that_has_duplicate"] = l3
 
@@ -91,6 +90,9 @@ def FileFinder2(target_Dir, target_file_extension):
 
     df.to_csv("interim.csv")
     df2 = df.filter(["FilePath","directory_that_has_duplicate","file_size_bytes"],axis=1)
+    df2.replace("")
+    print(df2["directory_that_has_duplicate"])
+    df2.dropna(subset=["directory_that_has_duplicate"],inplace=True)
     df2.to_csv("summary_2.csv")
 
     print("This has completed")
